@@ -7,3 +7,8 @@ target/maven-archiver/pom.properties
 target/*
 .vscode/launch.json
 .gitignore
+.idea/
+.settings/
+.classpath
+.factorypath
+.project

@@ -1,14 +1,13 @@
 package com.colaenjoyer.imagefilters.filters;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Random;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
+
+import com.colaenjoyer.imagefilters.utils.ImageUtils;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.java.Log;
@@ -22,7 +21,7 @@ public class Pixelsort implements ImageFilter {
     private Random random = new Random();
 
     public BufferedImage execute(String pathname, String maskPath) {
-        BufferedImage imageToSort = getInputImage(pathname);
+        BufferedImage imageToSort = ImageUtils.getInputImage(pathname);
 
         if(imageToSort != null) {
             bufferedImageWidth = imageToSort.getWidth();
@@ -37,9 +36,9 @@ public class Pixelsort implements ImageFilter {
         boolean[][] mask = null;
 
         if(maskPath != null) {
-            imageMask = getInputImage(maskPath);
+            imageMask = ImageUtils.getInputImage(maskPath);
             if(imageMask != null) {
-                mask = extractMask(imageMask);
+                mask = ImageUtils.extractMask(imageMask);
             } else {
                 return null;
             }
@@ -49,18 +48,7 @@ public class Pixelsort implements ImageFilter {
 
         addRandomColumnShifts(sortedPixels, 50);
 
-        return applyMask(imgArray, sortedPixels, mask);
-    }
-
-    private BufferedImage getInputImage(String pathname) {
-        BufferedImage img = null;
-
-        try {
-            img = ImageIO.read(new File(pathname));
-        } catch (IOException e) {
-            log.severe(e.getMessage());
-        }
-        return img;
+        return ImageUtils.applyMask(imgArray, sortedPixels, mask);
     }
 
     private int rgbAsSingleValue(int rgbValue) {
@@ -69,22 +57,6 @@ public class Pixelsort implements ImageFilter {
         int b = rgbValue & 0xff;
 
         return ((r * 299 + g * 587 + b * 114) / 1000);
-    }
-
-    private boolean[][] extractMask(BufferedImage maskImg) {
-        boolean[][] mask = new boolean[bufferedImageWidth][bufferedImageHeight];
-
-        for (int x = 0; x < bufferedImageWidth; x++) {
-            for (int y = 0; y < bufferedImageHeight; y++) {
-                if(maskImg.getRGB(x, y) == 0xFF000000) {
-                    mask[x][y] =  false;
-                }
-                if(maskImg.getRGB(x, y) == 0xFFFFFFFF) {
-                    mask[x][y] =  true;
-                }
-            }
-        }
-        return mask;
     }
 
     private Color[][] extractImg(BufferedImage bufferedImage) {
@@ -140,31 +112,6 @@ public class Pixelsort implements ImageFilter {
         }
     }
 
-    //TODO: Reduce complexity
-    private BufferedImage applyMask(Color[][] imageArray, Color[][] sortedImageArray, boolean[][] mask) {
-        BufferedImage sortedImage = new BufferedImage(bufferedImageWidth, bufferedImageHeight, BufferedImage.TYPE_INT_RGB);
-
-        if(mask == null) {
-            for (int x = 0; x < bufferedImageWidth; x++) {
-                for (int y = 0; y < bufferedImageHeight; y++) {
-                    sortedImage.setRGB(x, y, sortedImageArray[x][y].getRGB());
-                }
-            }
-            return sortedImage;
-        } else {
-            for (int x = 0; x < bufferedImageWidth; x++) {
-                for (int y = 0; y < bufferedImageHeight; y++) {
-                    if(mask[x][y]) {
-                        sortedImage.setRGB(x, y, imageArray[x][y].getRGB());
-                    }
-                    if(!mask[x][y]) {
-                        sortedImage.setRGB(x, y, sortedImageArray[x][y].getRGB());
-                    }
-                }
-            }
-            return sortedImage;
-        }
-    }
 }
 
 // 78 79 32 77 65 73 68 69 78 83 63

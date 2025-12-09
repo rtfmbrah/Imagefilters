@@ -7,6 +7,7 @@ import java.util.Scanner;
 import javax.imageio.ImageIO;
 
 import com.colaenjoyer.imagefilters.filters.Asciifilter;
+import com.colaenjoyer.imagefilters.filters.Lowpass;
 import com.colaenjoyer.imagefilters.filters.Pixelsort;
 import lombok.extern.java.Log;
 
@@ -24,12 +25,12 @@ public class ConsoleUtils {
         while (!validSelection) {
             clearScreen();
             String title = "-------------[imagefilters]-------------";
-            String subtitle = "[a] ASCIIFILTER  [p] PIXELSORT  [q] Exit";
+            String subtitle = "[a] ASCIIFILTER  [p] PIXELSORT [l] LOWPASS [q] Exit";
             String footer = "----------------------------------------";
 
             System.out.print(title + "\n" + subtitle + "\n" + footer + "\nSelection: ");
             selection = in.next().charAt(0);
-            if(selection == 'q' || selection == 'a' || selection == 'p') {
+            if(selection == 'q' || selection == 'a' || selection == 'p' || selection == 'l') {
                 validSelection = true;
             }
         }
@@ -41,8 +42,9 @@ public class ConsoleUtils {
         SelectionResult result = null;
         switch (selection) {
             case 'a' -> result =  new SelectionResult("-------------[ASCIIFILTER]-------------", false, new Asciifilter());
-            case 'p' -> result =   new SelectionResult("--------------[PIXELSORT]--------------", false, new Pixelsort());
-            case 'q' -> result =   new SelectionResult(null, true, null);
+            case 'p' -> result =  new SelectionResult("--------------[PIXELSORT]--------------", false, new Pixelsort());
+            case 'l' -> result =  new SelectionResult("---------------[LOWPASS]---------------", false, new Lowpass());
+            case 'q' -> result =  new SelectionResult(null, true, null);
         }
         return result;
     }
@@ -51,14 +53,14 @@ public class ConsoleUtils {
         String subtitle = "Image path: ";
         System.out.print(titleChoice + "\n" + subtitle);
 
-        String imagePath = in.next().replace("\"", "");
+        String imagePath = in.next().replace("\"", "").strip();
 
         ConsoleUtils.clearScreen();
 
         subtitle = "Image path: " + imagePath + "\nMask path: ";
         System.out.print(titleChoice + "\n" + subtitle);
 
-        String maskPath = in.next().replace("\"", "");
+        String maskPath = in.next().replace("\"", "").strip();
         if(maskPath.isEmpty()) {
             maskPath = null;
         }

@@ -1,7 +1,5 @@
 package com.colaenjoyer.imagefilters.filters;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.awt.Color;
@@ -9,7 +7,8 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
+
+import com.colaenjoyer.imagefilters.utils.ImageUtils;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.java.Log;
@@ -20,7 +19,7 @@ public class Asciifilter implements ImageFilter {
     private static final int FONT_SIZE = 8;
 
     public BufferedImage execute(String pathname, String mask) {
-        BufferedImage inputImage = getInputImage(pathname);
+        BufferedImage inputImage = ImageUtils.getInputImage(pathname);
 
         int bufferedImageWidth = inputImage.getWidth();
         int bufferedImageHeight = inputImage.getHeight();
@@ -29,21 +28,14 @@ public class Asciifilter implements ImageFilter {
         boolean[][] maskArray = null;
 
         if(mask != null) {
-            imageMask = scaleImage(getInputImage(mask), bufferedImageWidth * FONT_SIZE,
+            imageMask = ImageUtils.scaleImage(ImageUtils.getInputImage(mask), bufferedImageWidth * FONT_SIZE,
                     bufferedImageHeight * FONT_SIZE);
-            maskArray = extractMask(imageMask);
+            maskArray = ImageUtils.extractMask(imageMask);
         }
 
-        BufferedImage scaledInputImage = scaleImage(inputImage, bufferedImageWidth * FONT_SIZE,
+        BufferedImage scaledInputImage = ImageUtils.scaleImage(inputImage, bufferedImageWidth * FONT_SIZE,
                 bufferedImageHeight * FONT_SIZE);
-        return applyMask(scaledInputImage, textAsImage(toAscii(inputImage)), maskArray);
-    }
-
-    private BufferedImage scaleImage(BufferedImage originalScaleImage, int newWidth, int newHeight) {
-        BufferedImage scaledImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
-        Graphics2D graphics2D = scaledImage.createGraphics();
-        graphics2D.drawImage(originalScaleImage, 0, 0, newWidth, newHeight, null);
-        return scaledImage;
+        return ImageUtils.applyMask(scaledInputImage, textAsImage(toAscii(inputImage)), maskArray);
     }
 
     private BufferedImage textAsImage(String textString) {
@@ -74,53 +66,12 @@ public class Asciifilter implements ImageFilter {
         return resultImage;
     }
 
-    private BufferedImage applyMask(BufferedImage image, BufferedImage filteredImage, boolean[][] mask) {
-        if(mask != null) {
-            for (int x = 0; x < filteredImage.getWidth(); x++) {
-                for (int y = 0; y < filteredImage.getHeight(); y++) {
-                    if(mask[x][y]) {
-                        filteredImage.setRGB(x, y, image.getRGB(x, y));
-                    }
-                    if(!mask[x][y]) {
-                        filteredImage.setRGB(x, y, filteredImage.getRGB(x, y));
-                    }
-                }
-            }
-        }
-        return filteredImage;
-    }
-
-    private boolean[][] extractMask(BufferedImage maskImg) {
-        boolean[][] mask = new boolean[maskImg.getWidth()][maskImg.getHeight()];
-
-        for (int y = 0; y < maskImg.getHeight(); y++) {
-            for (int x = 0; x < maskImg.getWidth(); x++) {
-                if(maskImg.getRGB(x, y) == Color.BLACK.getRGB()) {
-                    mask[x][y] =  false;
-                } else if(maskImg.getRGB(x, y) == Color.WHITE.getRGB()) {
-                    mask[x][y] =  true;
-                }
-            }
-        }
-        return mask;
-    }
-
     private int getPixelBrightness(BufferedImage img, int x, int y) {
         int pixel = img.getRGB(x, y);
         int imageRed = (pixel >> 16) & 0xff;
         int imageGreen = (pixel >> 8) & 0xff;
         int imageBlue = pixel & 0xff;
         return (imageBlue + imageGreen + imageRed) / 3;
-    }
-
-    private BufferedImage getInputImage(String pathname) {
-        BufferedImage img = null;
-        try {
-            img = ImageIO.read(new File(pathname));
-        } catch (IOException e) {
-            log.severe(e.getMessage());
-        }
-        return img;
     }
 
     private String toAscii(BufferedImage img) {
