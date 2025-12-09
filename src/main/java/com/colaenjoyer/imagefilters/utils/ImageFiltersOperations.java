@@ -3,6 +3,7 @@ package com.colaenjoyer.imagefilters.utils;
 import com.colaenjoyer.imagefilters.configuration.AppConfiguration;
 import com.colaenjoyer.imagefilters.filters.Asciifilter;
 import com.colaenjoyer.imagefilters.filters.ImageFilter;
+import com.colaenjoyer.imagefilters.filters.Lowpass;
 import com.colaenjoyer.imagefilters.filters.Pixelsort;
 import lombok.extern.java.Log;
 
@@ -39,6 +40,7 @@ public class ImageFiltersOperations {
         switch (selection) {
             case 'a': selectedImageFilter = new Asciifilter(); break;
             case 'p': selectedImageFilter = new Pixelsort(); break;
+            case 'l': selectedImageFilter = new Lowpass(); break;
             default: case 'q': System.exit(0); break;
         }
         InputImagePaths inputImagePaths = getImagePaths();
