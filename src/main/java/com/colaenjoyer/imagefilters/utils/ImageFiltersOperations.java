@@ -25,10 +25,11 @@ public class ImageFiltersOperations {
     public static char selectionMenu() {
         boolean validSelection = false;
         char selection = 0;
+
         while (!validSelection) {
             System.out.print("\nSelection: ");
             selection = in.next().charAt(0);
-            if(selection == 'q' || selection == 'a' || selection == 'p') {
+            if(selection == 'q' || selection == 'a' || selection == 'p' || selection == 'l') {
                 validSelection = true;
             }
         }
@@ -37,14 +38,17 @@ public class ImageFiltersOperations {
 
     public static void executeSelection(char selection) {
         ImageFilter selectedImageFilter = null;
+
         switch (selection) {
             case 'a': selectedImageFilter = new Asciifilter(); break;
             case 'p': selectedImageFilter = new Pixelsort(); break;
             case 'l': selectedImageFilter = new Lowpass(); break;
             default: case 'q': System.exit(0); break;
         }
+
         InputImagePaths inputImagePaths = getImagePaths();
         BufferedImage filterResult = selectedImageFilter.execute(inputImagePaths.imagePath(), inputImagePaths.maskPath());
+
         if(filterResult != null) {
             saveResultImage(filterResult, inputImagePaths.imagePath(), selectedImageFilter);
         } else {

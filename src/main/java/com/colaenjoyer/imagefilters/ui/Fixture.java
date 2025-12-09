@@ -13,19 +13,23 @@ public class Fixture {
     private Fixture() {}
 
     public static List<MenuItem> getSelectionMenuItems() {
-        return Arrays.asList(MenuItem.builder()
+        return Arrays.asList(
+            MenuItem.builder()
                 .title("asciifilter")
                 .selectionChar('a')
                 .function(getCommandExecution(ImageFiltersOperations::executeSelection, 'a'))
-                .build(), MenuItem.builder()
+                .build(), 
+            MenuItem.builder()
                 .title("pixelsort")
                 .selectionChar('p')
                 .function(getCommandExecution(ImageFiltersOperations::executeSelection, 'p'))
-                .build(), MenuItem.builder()
+                .build(), 
+            MenuItem.builder()
                 .title("lowpass")
                 .selectionChar('l')
                 .function(getCommandExecution(ImageFiltersOperations::executeSelection, 'l'))
-                .build(), MenuItem.builder()
+                .build(), 
+            MenuItem.builder()
                 .title("quit")
                 .selectionChar('q')
                 .function(getCommandExecution(ImageFiltersOperations::executeSelection, 'q'))
@@ -37,12 +41,13 @@ public class Fixture {
                 getParagraphMenuBar("selectionParagraph", "Select a filter:"),
                 getParagraphMenuBar("asciiFilterInfo", "Asciifilter - Converts Image into Ascii art."),
                 getParagraphMenuBar("pixelSortInfo", "Pixelsort - Sorts image pixels by color."),
+                getParagraphMenuBar("lowpassInfo", "Lowpass filter - Blur images"),
                 getEmptyMenuBar(),
                 getSelectionMenuBar("filterSelection", getSelectionMenuItems())
         );
     }
 
     public static Menu getSelectionMenu() {
-        return Menu.builder().title("imagefilters").width(48).height(25).menuBars(getSelectionMenuBars()).build();
+        return Menu.builder().title("imagefilters").width(56).height(32).menuBars(getSelectionMenuBars()).build();
     }
 }

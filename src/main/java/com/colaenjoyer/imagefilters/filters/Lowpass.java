@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import com.colaenjoyer.imagefilters.utils.ImageUtils;
 
 public class Lowpass implements ImageFilter {
-
     @Override
     public BufferedImage execute(String pathname, String maskPath) {
         BufferedImage inputImage = ImageUtils.getInputImage(pathname);

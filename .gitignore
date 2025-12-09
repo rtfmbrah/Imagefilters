@@ -4,7 +4,7 @@
 *.class
 target/maven-archiver/pom.properties
 *.jar
-target/*
+target/
 .vscode/launch.json
 .gitignore
 .idea/
