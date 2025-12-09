@@ -40,6 +40,7 @@ public class ImageUtils {
                 }
             }
         }
+
         return mask;
     }
 

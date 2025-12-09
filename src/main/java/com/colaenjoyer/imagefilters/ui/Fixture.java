@@ -28,12 +28,8 @@ public class Fixture {
                 .title("lowpass")
                 .selectionChar('l')
                 .function(getCommandExecution(ImageFiltersOperations::executeSelection, 'l'))
-                .build(), 
-            MenuItem.builder()
-                .title("quit")
-                .selectionChar('q')
-                .function(getCommandExecution(ImageFiltersOperations::executeSelection, 'q'))
-                .build());
+                .build() 
+            );
     }
 
     public static List<MenuBar> getSelectionMenuBars() {
@@ -43,11 +39,18 @@ public class Fixture {
                 getParagraphMenuBar("pixelSortInfo", "Pixelsort - Sorts image pixels by color."),
                 getParagraphMenuBar("lowpassInfo", "Lowpass filter - Blur images"),
                 getEmptyMenuBar(),
-                getSelectionMenuBar("filterSelection", getSelectionMenuItems())
+                getSelectionMenuBar("filterSelection", getSelectionMenuItems()),
+                getSelectionMenuBar("quit", List.of(
+                    MenuItem.builder()
+                        .title("quit")
+                        .selectionChar('q')
+                        .function(getCommandExecution(ImageFiltersOperations::executeSelection, 'q'))
+                        .build()
+                ))
         );
     }
 
     public static Menu getSelectionMenu() {
-        return Menu.builder().title("imagefilters").width(56).height(32).menuBars(getSelectionMenuBars()).build();
+        return Menu.builder().title("imagefilters").width(46).height(38).menuBars(getSelectionMenuBars()).build();
     }
 }

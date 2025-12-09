@@ -75,7 +75,7 @@ public class ImageFiltersOperations {
                 (imagePath.lastIndexOf(separator) + 1), imagePath.lastIndexOf("."));
         try {
             clearScreen();
-            outName += selectedImageFilter.getClass() == Asciifilter.class ? "_ascii.png" : "_sorted.png";
+            outName += "_" + selectedImageFilter.getClass().getSimpleName() + ".png";
             ImageIO.write(resultImage, "png", new File(outName));
             log.info("Saved image to " + outName);
             TimeUnit.SECONDS.sleep(1);
