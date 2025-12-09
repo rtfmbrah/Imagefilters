@@ -10,13 +10,18 @@ import java.awt.image.BufferedImage;
 
 import com.colaenjoyer.imagefilters.utils.ImageUtils;
 
+import com.colaenjoyer.imagefilters.configuration.FilterConfiguration;
 import lombok.NoArgsConstructor;
 import lombok.extern.java.Log;
 
-@NoArgsConstructor
 @Log
+@NoArgsConstructor
 public class Asciifilter implements ImageFilter {
-    private static final int FONT_SIZE = 8;
+    private static final int FONT_SIZE = FilterConfiguration.AsciiFilterConfiguration.getFontSize();
+    private static final String FONT = FilterConfiguration.AsciiFilterConfiguration.getFont();
+    private static final int OFFSET = FilterConfiguration.AsciiFilterConfiguration.getBrightnessOffset();
+    private static final Color BACKGROUND_COLOR = FilterConfiguration.AsciiFilterConfiguration.getBackgroundColor();
+    private static final Color CHAR_COLOR = FilterConfiguration.AsciiFilterConfiguration.getCharColor();
 
     public BufferedImage execute(String pathname, String mask) {
         BufferedImage inputImage = ImageUtils.getInputImage(pathname);
@@ -46,15 +51,15 @@ public class Asciifilter implements ImageFilter {
         
         Graphics2D resultImageGraphics = resultImage.createGraphics();
 
-        resultImageGraphics.setPaint(Color.BLACK);
+        resultImageGraphics.setPaint(BACKGROUND_COLOR);
         resultImageGraphics.fillRect(0, 0, resultImage.getWidth(), resultImage.getHeight());
 
-        resultImageGraphics.setColor(Color.WHITE);
+        resultImageGraphics.setColor(CHAR_COLOR);
 
         Map<TextAttribute, Object> fontAttributes = new HashMap<>();
         fontAttributes.put(TextAttribute.TRACKING, 1);
 
-        resultImageGraphics.setFont(new Font("Arial", Font.PLAIN, FONT_SIZE).deriveFont(fontAttributes));
+        resultImageGraphics.setFont(new Font(FONT, Font.PLAIN, FONT_SIZE).deriveFont(fontAttributes));
 
         for(int y = 0; y < resultImage.getHeight()/ FONT_SIZE; y++) {
             for (int x = 0; x < resultImage.getWidth()/ FONT_SIZE; x++) {
@@ -78,13 +83,13 @@ public class Asciifilter implements ImageFilter {
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < img.getHeight(); i++) {
             for (int j = 0; j < img.getWidth(); j++) {
-                int imageBrightness = getPixelBrightness(img, j, i);
+                int imageBrightness = (getPixelBrightness(img, j, i) + Asciifilter.OFFSET);
 
                 if (imageBrightness <= 64) {
                     s.append(".");
-                } else if (64 < imageBrightness && imageBrightness < 129) {
+                } else if (imageBrightness <= 129) {
                     s.append("-");
-                } else if (129 < imageBrightness && imageBrightness < 193) {
+                } else if (imageBrightness <= 193) {
                     s.append("+");
                 } else {
                     s.append("*");
